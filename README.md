@@ -1,35 +1,12 @@
 # 프레임워크 구현
-## 진행 방법
-* 프레임워크 구현에 대한 요구사항을 파악한다.
-* 요구사항에 대한 구현을 완료한 후 자신의 github 아이디에 해당하는 브랜치에 Pull Request(이하 PR)를 통해 코드 리뷰 요청을 한다.
-* 코드 리뷰 피드백에 대한 개선 작업을 하고 다시 PUSH한다.
-* 모든 피드백을 완료하면 다음 단계를 도전하고 앞의 과정을 반복한다.
 
-## 우아한테크코스 코드리뷰
-* [온라인 코드 리뷰 과정](https://github.com/woowacourse/woowacourse-docs/blob/master/maincourse/README.md)
+* 우아한테크코스 레벨3 DI 프레임워크 구현 미션 저장소입니다.
+* [Step2 피드백](https://github.com/woowacourse/jwp-di/pull/55)([Step1 피드백](https://github.com/woowacourse/jwp-di/pull/9))
 
 
-## DB
+## 구현 방식
+`@Controller`, `@Service`같이 클래스로 만들어지는 빈 뿐 아니라 `@Configuration`처럼 함수로 만들어지는 빈도 추가해야 했습니다.
 
-- [도커 다운로드](https://www.docker.com/products/docker-desktop)
+때문에 빈의 생성 방식을 추상화한 `InstantiationMethod` 인터페이스를 만들었습니다. 빈 생성 방식에 따라 빈을 스캔하며 `BeanCreateMatcher`에 `Class Type`과 `InstantiationMethod` 구현체를 가지게 합니다. `BeanCreateMatcher`를 모두 만들면 본격적으로 `InstantiationMethod` 구현체를 사용해 빈을 생성(`instantiation`)합니다. (`BeanFactory` 클래스에서 `BeanCreateMatcher`를 사용해 만듭니다.)
 
-### 실행 방법
-
-1. IntelliJ IDEA에서 `docker-compose.yml`로 이동 후, Run 버튼 클릭
-2. 혹은 프로젝트 디렉터리에서 아래의 명령어를 터미널에 입력
-
-```bash
-cd docker
-docker-compose up -d
-```
-
-- 대용량 데이터 처리를 위한 Dataset Download
-
-> [stack-overflow-2018-developer-survey](https://www.kaggle.com/stackoverflow/stack-overflow-2018-developer-survey)
-
-- 아래의 메뉴얼을 확인하여 다운받은 CSV파일을 import한다.
-
-> https://dev.mysql.com/doc/workbench/en/wb-admin-export-import-table.html
-
-
-
+빈의 파라미터를 생성할 때도 `BeanCreateMatcher`에 빈 타입이 있는지 확인하고 있다면 현재 만든 빈 목록에 있는지 확인하고 만들어 추가하는 형식입니다.
